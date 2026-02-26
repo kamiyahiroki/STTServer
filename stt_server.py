@@ -29,7 +29,8 @@ SAMPLE_RATE = 16000
 BYTES_PER_SAMPLE = 2  # 16bit
 
 # モデル別の推奨チャンク長（秒）
-CHUNK_DURATION = 5.0
+BASE_CHUNK_DURATION = 5.0
+TINY_CHUNK_DURATION = 10.0
 
 def get_hef_paths(variant: str, hw_arch: str):
     """HEFファイルパスを取得"""
@@ -142,7 +143,8 @@ def run_server(
     hw_arch: str = "hailo8l",
     multi_process_service: bool = False,
 ):
-    chunk_duration = CHUNK_DURATION
+    # tiny / tiny.en は 10秒、それ以外は 5秒
+    chunk_duration = TINY_CHUNK_DURATION if variant in ("tiny", "tiny.en") else BASE_CHUNK_DURATION
     encoder_path, decoder_path = get_hef_paths(variant, hw_arch)
 
     pipeline = HailoWhisperPipeline(
